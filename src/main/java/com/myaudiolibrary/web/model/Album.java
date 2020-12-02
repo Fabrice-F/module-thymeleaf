@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class Album {
 
     @Id
-    @Column(name = "AlbumId")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

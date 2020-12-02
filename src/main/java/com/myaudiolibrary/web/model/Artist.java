@@ -16,7 +16,7 @@ public class Artist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ArtistId")
+    @Column(name = "id")
     private Integer id;
 
     @JsonIgnoreProperties("artist")
