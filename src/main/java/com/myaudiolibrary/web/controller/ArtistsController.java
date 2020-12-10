@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -113,8 +114,6 @@ public class ArtistsController {
     public RedirectView saveArtist(final ModelMap model,Artist artist){
         // TODO: Traiter si artist n'as pas de nom renseigné
 
-
-        // todo : erreur 409 et non pas illegal argument
         if (artistRepository.existsByNameIgnoreCase(artist.getName()))
             throw new EntityExistsException("L'artiste " + artist.getName() + " existe déja dans la bdd");
 
@@ -123,18 +122,22 @@ public class ArtistsController {
         return new RedirectView("/artists/" + artistSave.getId());
     }
 
-    @PostMapping(value = "/update")
-    public RedirectView updateArtist(final ModelMap model,Artist artist){
+    @PostMapping(produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE, value = "/update")
+    public RedirectView updateArtist(Artist artist){
 
-        System.out.println(artist.getName());
-        return new RedirectView("index");
+        Artist artistSave=  artistRepository.save(artist);
+        return new RedirectView("/artists/"+artist.getId() );
     }
 
     @GetMapping(value = "/{id}/delete")
-    public RedirectView deleteArtist(@PathVariable Long id){
+    @ResponseStatus(code = HttpStatus.OK)
+    public String deleteArtist(@PathVariable Integer id){
 
-        System.out.println(id);
-        return new RedirectView("index");
+        if(!artistRepository.existsById(id))
+            throw new EntityNotFoundException("Aucun artiste trouvé avec l'id: " + id );
+
+        artistRepository.deleteById(id);
+        return "accueil";
     }
 
 }
