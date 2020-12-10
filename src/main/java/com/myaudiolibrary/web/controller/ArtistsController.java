@@ -14,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.awt.print.Pageable;
 import java.util.Optional;
@@ -115,11 +116,25 @@ public class ArtistsController {
 
         // todo : erreur 409 et non pas illegal argument
         if (artistRepository.existsByNameIgnoreCase(artist.getName()))
-            throw new IllegalArgumentException("L'artiste " + artist.getName() + " existe déja dans la bdd");
+            throw new EntityExistsException("L'artiste " + artist.getName() + " existe déja dans la bdd");
 
         Artist artistSave=  artistRepository.save(artist);
 
         return new RedirectView("/artists/" + artistSave.getId());
+    }
+
+    @PostMapping(value = "/update")
+    public RedirectView updateArtist(final ModelMap model,Artist artist){
+
+        System.out.println(artist.getName());
+        return new RedirectView("index");
+    }
+
+    @GetMapping(value = "/{id}/delete")
+    public RedirectView deleteArtist(@PathVariable Long id){
+
+        System.out.println(id);
+        return new RedirectView("index");
     }
 
 }
