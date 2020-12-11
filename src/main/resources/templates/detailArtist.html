@@ -31,7 +31,7 @@
                                 th:value="${artist.name}"
                                 class="ember-text-field form-control ember-view"
                         />
-
+                    </form>
                         <label class="form-control-label">Albums</label>
                         <div class="row">
                             <div class="col-lg-10">
@@ -42,23 +42,36 @@
                             </div>
                             <div class="col-lg-2 text-center">
                                 <div class="list-group text-center">
-                                    <button class="btn-danger list-group-item list-group-item-action" th:each="album : ${artist.albums}">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </button>
+                                    <form  th:action="'/albums/' +${album.id}" th:method="delete"
+                                           th:each="album : ${artist.albums}">
+                                        <button class="btn-danger list-group-item list-group-item-action">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </form>
                                 </div>
 
                             </div>
                         </div>
-                    </form>
 
 
-                    <div class="row">
+
+                    <form class="row" action="/albums" method="post">
                         <div class="col-lg-10">
                             <input
                                     type="text"
                                     placeholder="Ajouter un album..."
                                     class="form-control ember-text-field ember-view"
+                                    id="title"
+                                    name="title"
                             />
+                            <input
+                                    type="hidden"
+                                    class="form-control ember-text-field ember-view"
+                                    id="artistId"
+                                    name="artistId"
+                                    th:value="${artist.id}"
+                            />
+
                         </div>
                         <div class="col-lg-2 text-center">
                             <button
@@ -67,7 +80,8 @@
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>
-                    </div>
+                    </form>
+
                 </div>
             </div>
         </div>
