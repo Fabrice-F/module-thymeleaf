@@ -14,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.awt.print.Pageable;
 import java.util.Optional;
@@ -113,9 +114,8 @@ public class ArtistsController {
         // TODO: Traiter si artist n'as pas de nom renseigné
 
 
-        // todo : erreur 409 et non pas illegal argument
         if (artistRepository.existsByNameIgnoreCase(artist.getName()))
-            throw new IllegalArgumentException("L'artiste " + artist.getName() + " existe déja dans la bdd");
+            throw new EntityExistsException("L'artiste " + artist.getName() + " existe déja dans la bdd");
 
         Artist artistSave=  artistRepository.save(artist);
 

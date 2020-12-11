@@ -64,8 +64,8 @@
             </div>
         </div>
         <div class="row">
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <button  class="btn btn-danger">Supprimer</button>
+            <button type="submit" class="btn btn-primary" th:text="${artist.id} ? 'Modifier':'Enregistrer'"></button>
+            <button  class="btn btn-danger" th:if="${artist.id}">Supprimer</button>
         </div>
     </form>
 </div>
