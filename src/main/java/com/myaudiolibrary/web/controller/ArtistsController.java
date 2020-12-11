@@ -110,7 +110,7 @@ public class ArtistsController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public RedirectView saveArtist(final ModelMap model,Artist artist){
+    public RedirectView saveArtist(Artist artist){
         // TODO: Traiter si artist n'as pas de nom renseigné
 
 
@@ -120,6 +120,27 @@ public class ArtistsController {
         Artist artistSave=  artistRepository.save(artist);
 
         return new RedirectView("/artists/" + artistSave.getId());
+    }
+
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{id}")
+    public RedirectView updateArtist(Artist artist, @PathVariable("id")Integer id){
+
+        if (!artistRepository.existsById(id))
+            throw  new EntityNotFoundException("L'artiste avec l'id: " + id + " n'existe pas");
+
+        Artist artistSave=  artistRepository.save(artist);
+        return new RedirectView("/artists/" + artistSave.getId());
+    }
+
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE,value = "/{id}")
+    public String deleteArtist(@PathVariable("id")Integer id){
+
+        if(!artistRepository.existsById(id))
+            throw new EntityNotFoundException("L'artiste avec l'id: " + id + " n'as pas été trouvé");
+
+        artistRepository.deleteById(id);
+
+        return "accueil";
     }
 
 }
