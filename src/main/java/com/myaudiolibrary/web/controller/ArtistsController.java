@@ -47,7 +47,7 @@ public class ArtistsController {
             @RequestParam(defaultValue = "ASC",name = "sortDirection") String sortDirection,
             final ModelMap model){
 
-        if(name.isBlank() || name.isEmpty())
+        if(name.isBlank())
             throw new IllegalArgumentException("Le nom ne peut pas être vide");
 
         PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.valueOf(sortDirection),sortProperty);

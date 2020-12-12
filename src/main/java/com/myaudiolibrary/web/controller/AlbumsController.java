@@ -29,11 +29,11 @@ public class AlbumsController {
 
         // verifier si le nom de album n'est pas vide
 
-        Optional<Artist> optionalArtist =  artistRepository.findById(id);
 
-        if(optionalArtist.isEmpty())
+        if(!artistRepository.existsById(id))
             throw new EntityNotFoundException("il n'existe pas d'artiste avec l'id " + id);
 
+        Optional<Artist> optionalArtist =  artistRepository.findById(id);
         album.setArtist(optionalArtist.get());
         albumRepository.save(album);
 
@@ -43,11 +43,11 @@ public class AlbumsController {
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
     public RedirectView deleteAlbums(@PathVariable("id") Integer id){
 
-        Optional<Album> optionalAlbum =  albumRepository.findById(id);
 
-        if(optionalAlbum.isEmpty())
+        if(!albumRepository.existsById(id))
             throw  new EntityNotFoundException("L'album avec l'id " + id + " n'existe pas");
 
+        Optional<Album> optionalAlbum =  albumRepository.findById(id);
         Integer artistId = optionalAlbum.get().getArtist().getId();
         albumRepository.deleteById(id);
 
