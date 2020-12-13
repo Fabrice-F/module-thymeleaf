@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -27,8 +28,11 @@ public class AlbumsController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public RedirectView addAlbums(Album album, @RequestParam("artistId")Integer id){
 
-        // verifier si le nom de album n'est pas vide
+        if (album.getTitle().isBlank())
+            throw new IllegalArgumentException("Le nom de l'album ne peut pas être vide");
 
+        if (albumRepository.existsByTitleIgnoreCase(album.getTitle()))
+            throw new EntityExistsException("L'album \"" + album.getTitle() + "\" existe déja");
 
         if(!artistRepository.existsById(id))
             throw new EntityNotFoundException("il n'existe pas d'artiste avec l'id " + id);
