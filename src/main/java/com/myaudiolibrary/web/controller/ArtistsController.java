@@ -31,10 +31,15 @@ public class ArtistsController {
     public String getArtistById(@PathVariable("id") Integer id, final ModelMap model){
 
         // catch erreur de conversion
-        Optional<Artist> artistOptional = artistRepository.findById(id);
-        if(artistOptional.isEmpty()){
+
+
+        if(!artistRepository.existsById(id)){
             throw new EntityNotFoundException("L'employé d'identifiant " + id + " n'a pas été trouvé !");
         }
+
+        Optional<Artist> artistOptional = artistRepository.findById(id);
+
+
         model.put("artist",artistOptional.get());
         return "detailArtist";
     }
@@ -48,13 +53,13 @@ public class ArtistsController {
             @RequestParam(defaultValue = "ASC",name = "sortDirection") String sortDirection,
             final ModelMap model){
 
-        if(name.isBlank() || name.isEmpty())
-            throw new IllegalArgumentException("Le nom ne peut pas être vide");
+        if(name.isBlank())
+            throw new IllegalArgumentException("La recherche ne peut pas avoir un nom vide");
+
+        paramsIsOk(page,size,sortDirection);
 
         PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.valueOf(sortDirection),sortProperty);
         Page<Artist> artistPage = artistRepository.findAllByNameIgnoreCaseContaining(name,pageRequest);
-
-
 
 
         model.put("page",page);
@@ -80,11 +85,10 @@ public class ArtistsController {
             @RequestParam(defaultValue = "ASC",name = "sortDirection") String sortDirection,
             final ModelMap model){
 
+        paramsIsOk(page,size,sortDirection);
 
         PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.valueOf(sortDirection),sortProperty);
         Page<Artist> artistPage = artistRepository.findAll(pageRequest);
-
-
 
 
         model.put("page",page);
@@ -112,7 +116,9 @@ public class ArtistsController {
 
     @PostMapping(produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RedirectView saveArtist(final ModelMap model,Artist artist){
-        // TODO: Traiter si artist n'as pas de nom renseigné
+
+        if(artist.getName().isBlank())
+            throw new IllegalArgumentException("Le nom de l'artiste ne peut pas être vide");
 
         if (artistRepository.existsByNameIgnoreCase(artist.getName()))
             throw new EntityExistsException("L'artiste " + artist.getName() + " existe déja dans la bdd");
@@ -125,8 +131,14 @@ public class ArtistsController {
     @PostMapping(produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE, value = "/update")
     public RedirectView updateArtist(Artist artist){
 
+        if(artist.getName().isBlank())
+            throw new IllegalArgumentException("Le nom de l'artiste ne peut pas être vide");
+
+        if (!artistRepository.existsByNameIgnoreCase(artist.getName()))
+            throw  new EntityNotFoundException("L'artiste n'existe pas");
+
         Artist artistSave=  artistRepository.save(artist);
-        return new RedirectView("/artists/"+artist.getId() );
+        return new RedirectView("/artists/"+artistSave.getId() );
     }
 
     @GetMapping(value = "/{id}/delete")
@@ -140,4 +152,19 @@ public class ArtistsController {
         return "accueil";
     }
 
+    private void paramsIsOk(Integer page, Integer size , String sortDirection){
+
+        if (page < 0) {
+            throw new IllegalArgumentException("Le paramètre page doit être positif ou nul !");
+        }
+
+        if(size <= 0 || size > 50){
+            throw new IllegalArgumentException("Le paramètre size doit être compris entre 0 et 50");
+        }
+
+        if(!"ASC".equalsIgnoreCase(sortDirection) &&
+                !"DESC".equalsIgnoreCase(sortDirection)){
+            throw new IllegalArgumentException("Le paramètre sortDirection doit valoir ASC ou DESC");
+        }
+    }
 }
