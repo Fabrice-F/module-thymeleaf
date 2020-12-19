@@ -72,7 +72,7 @@ public class ArtistsController {
             throw new IllegalArgumentException("La recherche ne peut pas avoir un nom vide");
 
         // vérifie si les paramètres sont valides
-        paramsIsOk(page,size,sortDirection);
+        paramsIsOk(page,size,sortDirection,sortProperty);
 
         // récupère lkes résultats
         PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.valueOf(sortDirection),sortProperty);
@@ -111,7 +111,7 @@ public class ArtistsController {
             @RequestParam(defaultValue = "ASC",name = "sortDirection") String sortDirection,
             final ModelMap model){
 
-        paramsIsOk(page,size,sortDirection);
+        paramsIsOk(page,size,sortDirection,sortProperty);
 
         PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.valueOf(sortDirection),sortProperty);
         Page<Artist> artistPage = artistRepository.findAll(pageRequest);
@@ -157,7 +157,7 @@ public class ArtistsController {
         if(artist.getName().isBlank())
             throw new IllegalArgumentException("Le nom de l'artiste ne peut pas être vide");
 
-        // verifie si l'artiste n'existe pas :
+        // verifie si l'artiste existe déja :
         if (artistRepository.existsByNameIgnoreCase(artist.getName()))
             throw new EntityExistsException("L'artiste " + artist.getName() + " existe déja dans la bdd");
 
@@ -178,9 +178,9 @@ public class ArtistsController {
         if(artist.getName().isBlank())
             throw new IllegalArgumentException("Le nom de l'artiste ne peut pas être vide");
 
-        // verifie si l'artiste n'existe pas :
-        if (!artistRepository.existsByNameIgnoreCase(artist.getName()))
-            throw  new EntityNotFoundException("L'artiste n'existe pas");
+        // verifie si lors de la modif l'artiste existe déja en bdd :
+        if (artistRepository.existsByNameIgnoreCase(artist.getName()))
+            throw  new EntityNotFoundException("L'artiste existe déja en bdd");
 
         Artist artistSave=  artistRepository.save(artist);
         return new RedirectView("/artists/"+artistSave.getId() );
@@ -210,7 +210,7 @@ public class ArtistsController {
      * @param size  nombre de résultat par page
      * @param sortDirection ordre ascendant ou descandant.
      */
-    private void paramsIsOk(Integer page, Integer size , String sortDirection){
+    private void paramsIsOk(Integer page, Integer size , String sortDirection,String sortProperty){
 
         // la page ne peut pas être à négative
         if (page < 0) {
@@ -227,5 +227,14 @@ public class ArtistsController {
                 !"DESC".equalsIgnoreCase(sortDirection)){
             throw new IllegalArgumentException("Le paramètre sortDirection doit valoir ASC ou DESC");
         }
+
+
+        // on ne peut pas avoir une valeur différente de null et de name
+        if(sortProperty!= null && sortProperty.compareToIgnoreCase("name")!=0) {
+            throw new IllegalArgumentException("Le paramètre sortProperty doit avoir la valeur name");
+        }
+
+
+
     }
 }

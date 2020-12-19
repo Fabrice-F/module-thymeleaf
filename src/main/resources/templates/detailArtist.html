@@ -79,7 +79,8 @@
         </div>
         <div class="row">
             <button type="submit" form="saveForm" class="btn btn-primary"
-                    th:text="${artist.name} ? 'Modifier' : 'Enregistrer'"></button>
+                    th:text="${artist.name} ? 'Modifier' : 'Enregistrer'"></button> <!-- change le texte du bouton si
+                     on est dans un nouvelle artiste -->
             <a th:if="${artist.id}" th:href="'/artists/'+${artist.id}+'/delete'" class="btn btn-danger">Supprimer</a>
         </div>
     </div>
