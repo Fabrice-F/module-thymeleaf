@@ -24,16 +24,24 @@ public class AlbumsController {
     @Autowired
     ArtistRepository artistRepository;
 
-
+    /**
+     * appeler quand on souhaite ajouter un album a un artiste
+     * @param album album a ajouter
+     * @param id identifiant de l'artiste.
+     * @return vers la vue details.artist.html
+     */
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public RedirectView addAlbums(Album album, @RequestParam("artistId")Integer id){
 
+        // si le nom de l'album est vide:
         if (album.getTitle().isBlank())
             throw new IllegalArgumentException("Le nom de l'album ne peut pas être vide");
 
+        // si le nom l'album existe déja dans la bdd (pas forcement pertinent peut-être retiré au besoin)
         if (albumRepository.existsByTitleIgnoreCase(album.getTitle()))
             throw new EntityExistsException("L'album \"" + album.getTitle() + "\" existe déja");
 
+        // vérifie si l'artiste auquel on souhaite rajouter l'album existe bien
         if(!artistRepository.existsById(id))
             throw new EntityNotFoundException("il n'existe pas d'artiste avec l'id " + id);
 
@@ -44,10 +52,15 @@ public class AlbumsController {
         return new RedirectView("/artists/" + album.getArtist().getId());
     }
 
+    /**
+     * Appeler quand on souhaite supprimer l'albulm
+     * @param id de l'album que l'on souhaite supprimé.
+     * @return
+     */
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
     public RedirectView deleteAlbums(@PathVariable("id") Integer id){
 
-
+        // es que l'album existe réellement:
         if(!albumRepository.existsById(id))
             throw  new EntityNotFoundException("L'album avec l'id " + id + " n'existe pas");
 
