@@ -1,24 +1,64 @@
-# myaudiolibrary version thymeleaf
+# myaudiolibrary version thymeleaf:
 
-! Dans cette version la modification et la suppression d'un artiste s'effectue comme dans le travaux pratique c'est à dire :  
+🖐 Bonjour, je me suis permis de réalisé 2 versions de ce projet, essentiellement car je souhaitais comprendre les différentes organisation du projet si on incluais des requêtes PUT et DELETE et si on ne les incluais pas.
 
-*Création d'un artiste:*  
-- L'artiste n'existe pas dans la page détails, "action" du formulaire contient la route "/artists/" en mode "POST". 
-- Le controller répondant à cette route a pour objectif d'enregistrer l'artiste reçu dans son requestBody .
-- Le bouton suppression dans cette configuration disparait, et le bouton de sauvegarde de l'artiste se nomme "Enregistrer".
+Vous êtes ici dans la version n'incluant pas les requêtes **PUT / DELETE** *(lien vers version 1 en bas de page)* .
+
+#### VERSION 2 sans PUT et DELETE: 
+Dans cette version afin de pouvoir comme demandé dans l'énoncé des exercices: 
+
+`5 - Modification d'un artiste` 
+`6 - Suppression d'un artiste` 
+`8 - Suppression d'un album`
+
+les méthodes :
+```sh
+PUT /artists/4
+DELETE /artists/5
+DELETE /albums/X
+```
+
+On été transformé en méthode **POST** comme ceci:
+
+###### exercice 4 :
+La méhode `PUT /artists/4 ` appelé dans l'exercice 5 pour mettre à jour un artiste a été remplacer par un **POST** répondant à la route:
+
+```
+/artists/update
+```
+La méthode POST produit ici un **application/x-www-form-urlencoded** et ne prend pas un **@RequestBody** mais directement un **Artist** en paramètre. 
+
+###### exercice 5 :
+
+La méhode `DELETE /artists/5 ` appelé dans l'exercice 6 pour supprimer un artiste a été remplacer ici par un **GET** répondant à la route:
+
+```
+/artists/{id}/delete
+```
+``id`` ici représentant l'identifiant de l'ariste à supprimer.
+
+###### exercice 8 :
+
+La méhode `DELETE /albums/X ` appelé dans l'exercice 8 pour supprimer un artiste a été remplacer ici aussi par un **GET** répondant à la route:
+```
+/albums/{id}
+```
+``id`` ici représentant l'identifiant de l'album à supprimer.
 
 
-*Modification d'un artiste :*  
-- Lorsqu'un artiste existe dans la page détails,  l'url "action" lié au "POST" dans le formulaire a été incrémenté du mot "/update", l'url qu'on obtient da,s "action" est alors  => "/artists/update".
-- Il est également ajouter l'id de l'artiste dans un input hidden.
-- Dans le controller répondant à cette route le même artiste (confirmation via son id) et nous le sauvegardons cela permet ici de changer son nom.
-- Le bouton suppression apparait (voir dessous pour son fonctionnement) , et le bouton de modification de l'artiste se nomme dans cette page "Modifier".
+### Commit réalisé :
 
-*Suppression d'un artiste:*  
-- Il es nécessaire pour pouvoir supprimer un artiste qu'on ne soit pas en mode création (sinon le bouton n'apparait pas), le bouton supprimer est un lien <a>
-  en HTML donc le href appele une route nommé => "/artists/ id_de_l'artiste /delete" (id_de_l'artiste étant renseigné grace au modelput artist.id) . 
-- Le controller répondant à cette route est un "GET" ayant comme value ="/{id}/delete", il récupère ensuite l'id de l'artiste afin de supprimer dans la bdd.
-  
+- Creation PR eval_V2
+- Ajout du controller et ajout de global exeption , exercice 4
+- Implementation delete et update avec le post et get
+- Ajout et suppression album ok!
+- ajout des securite
+- Ajout commentaires sur code
+- Fin des corrections et fin des commentaires
 
-- Création de la branche eval pour le projet thymeleaf
-- Creation de la pull request
+###### Merci de votre lecture et du temps passé sur le projet:   
+---
+
+Je vous partage le lien de la 1e version avec les PUT et DELETE integré :
+https://github.com/Fabrice-F/module-thymeleaf/tree/eval
+
