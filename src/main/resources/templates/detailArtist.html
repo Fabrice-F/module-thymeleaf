@@ -1,84 +1,102 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:div="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head"></head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IpiMdd050EvalWeb</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://bootswatch.com/3/journal/bootstrap.min.css">
-</head>
 <body class="ember-application">
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 
-	<div>
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" class="navbar-toggle collapsed">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a href="#">Librairie Audio</a>
-				</div>
+<!--/*@thymesVar id="artist" type="com.myaudiolibrary.web.model.Artist"*/-->
+<div>
+    <div th:replace="fragments/header :: menu"></div>
 
-				<div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
-					<ul class="nav navbar-nav">
-						<li class="active"><a href="#" class="nav-link ember-view">Liste des artistes</a></li>
-					</ul>
+    <div class="container">
 
-					<form role="search" class="navbar-form navbar-right">
-						<div class="form-group">
-							<input type="text" placeholder="Rechercher par nom" class="ember-text-field form-control ember-view">
-						</div>
-						<button type="submit" class="btn btn-default">Rechercher</button>
-					</form>
-				</div>
-			</div>
-		</nav>
+        <h2>Détail de l'artiste [[${artist.name}]]</h2>
 
-		<div class="container">
-			<h2>Détail de l'artiste AC/DC</h2>
+        <div class="row" >
+            <div class="col-lg-12" >
+                <div class="form-group">
+                    <form  id="saveForm"
+                          th:action="${artist.id ==null ? '/artists' : '/artists/'+artist.id }"
+                          th:method="${artist.id ==null ? 'post' : 'put'}">
 
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="form-group">
-						<label for="name" class="form-control-label">Nom</label>
-						<input type="text" id="name" class="ember-text-field form-control ember-view">
+                        <label for="name" class="form-control-label">Nom</label>
+                        <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                th:value="${artist.name}"
+                                class="ember-text-field form-control ember-view"
+                        />
+                    </form>
+                        <label class="form-control-label">Albums</label>
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <div class="list-group">
+                                    <li class="list-group-item" th:each="album : ${artist.albums}"
+                                        th:text="${album.title}"></li>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 text-center">
+                                <div class="list-group text-center">
+                                    <form  th:action="'/albums/' +${album.id}" th:method="delete"
+                                           th:each="album : ${artist.albums}">
+                                        <button class="btn-danger list-group-item list-group-item-action">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
 
 
-						<label for="performance" class="form-control-label">Albums</label>
-						<div class="row">
-							<div class="col-lg-10">
-								<div class="list-group">
-									<li class="list-group-item">&nbsp;Let There Be Rock</li>
-									<li class="list-group-item">&nbsp;For Those About To Rock We Salute You</li>
-								</div>
-							</div>
-							<div class="col-lg-2 text-center">
-								<div class="list-group text-center">
-									<button class="btn-danger list-group-item list-group-item-action"><span class="glyphicon glyphicon-remove"></span></button>
-									<button class="btn-danger list-group-item list-group-item-action"><span class="glyphicon glyphicon-remove"></span></button>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-10">
-								<input type="text" placeholder="Ajouter un album..." class="form-control ember-text-field ember-view">
-							</div>
-							<div class="col-lg-2 text-center">
-								<button class="btn-success list-group-item list-group-item-action"><span class="glyphicon glyphicon-plus"></span></button>
 
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<button disabled="" class="btn btn-primary">Enregistrer</button>
-				<button class="btn btn-danger">Supprimer</button>
-			</div>
-		</div>
-	</div>
+                    <form class="row" action="/albums" method="post">
+                        <div class="col-lg-10">
+                            <input
+                                    type="text"
+                                    placeholder="Ajouter un album..."
+                                    class="form-control ember-text-field ember-view"
+                                    id="title"
+                                    name="title"
+                            />
+                            <input
+                                    type="hidden"
+                                    class="form-control ember-text-field ember-view"
+                                    id="artistId"
+                                    name="artistId"
+                                    th:value="${artist.id}"
+                            />
+
+                        </div>
+                        <div class="col-lg-2 text-center">
+                            <button
+                                    class="btn-success list-group-item list-group-item-action"
+                            >
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row" >
+            <div class="col-md-1">
+                <button type="submit" form="saveForm" class="btn btn-primary"
+                        th:text="${artist.id} ? 'Modifier':'Enregistrer'"></button>
+            </div>
+            <div class="col-md-1">
+                <form th:if="${artist.id}" th:action="'/artists/'+ ${artist.id}" th:method="delete">
+                    <button  class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
 </body>
 </html>
