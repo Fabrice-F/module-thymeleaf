@@ -16,11 +16,11 @@ public class Artist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ArtistId")
+    @Column(name = "id")
     private Integer id;
 
     @JsonIgnoreProperties("artist")
-    @OneToMany(mappedBy = "artist" ,  cascade = CascadeType.REMOVE )
+    @OneToMany(mappedBy = "artist" ,  cascade = CascadeType.REMOVE , fetch = FetchType.EAGER)
     private Set<Album> albums;
 
     private String name;
@@ -48,5 +48,20 @@ public class Artist {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
